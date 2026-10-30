@@ -3,7 +3,7 @@ from crewai import Agent, Crew, Process, Task
 from langchain_groq import ChatGroq
 
 # ==========================================
-# 1. PAGE CONFIGURATION & STYLING
+# 1. PAGE CONFIGURATION
 # ==========================================
 st.set_page_config(
     page_title="PDL AI-Exec Council & Support Hub",
@@ -15,7 +15,7 @@ st.title("📡 Pak Datacom Limited (PDL) - Unified AI Executive & Operations Hub
 st.caption("Powered by CrewAI & Groq (openai/gpt-oss-120b)")
 
 # ==========================================
-# 2. API KEY & MODEL CONFIGURATION
+# 2. API KEY CONFIGURATION
 # ==========================================
 groq_api_key = st.secrets.get("GROQ_API_KEY")
 
@@ -25,7 +25,7 @@ if not groq_api_key:
         st.warning("Please configure GROQ_API_KEY in Streamlit Secrets or enter it above to proceed.")
         st.stop()
 
-# Initialize Groq LLM with requested model
+# Initialize Groq LLM
 llm = ChatGroq(
     groq_api_key=groq_api_key,
     model_name="openai/gpt-oss-120b",
@@ -33,7 +33,7 @@ llm = ChatGroq(
 )
 
 # ==========================================
-# 3. DEFINE ALL SPECIALIZED AGENTS (ZERO DEPENDENCY CONFLICT)
+# 3. DEFINE ALL SPECIALIZED AGENTS (CLEAN CONFIG)
 # ==========================================
 
 ceo_agent = Agent(
@@ -85,22 +85,6 @@ finance_agent = Agent(
     llm=llm
 )
 
-energy_agent = Agent(
-    role="Green AI Energy & Site Power Specialist",
-    goal="Optimize hybrid power systems (Solar/Battery/Generator) for remote VSAT towers to cut fuel OpEx.",
-    backstory="You optimize off-grid power infrastructure and reduce diesel generator consumption.",
-    verbose=True,
-    llm=llm
-)
-
-safe_city_agent = Agent(
-    role="B2G Safe City & Civic AI Integration Lead",
-    goal="Design turnkey civic safety, VMS integration, and municipal traffic AI solutions.",
-    backstory="You specialize in regional public sector AI projects and Video Management System (VMS) integration.",
-    verbose=True,
-    llm=llm
-)
-
 # ==========================================
 # 4. UI MULTI-TAB NAVIGATION
 # ==========================================
@@ -111,7 +95,7 @@ tab1, tab2, tab3 = st.tabs([
 ])
 
 # ------------------------------------------
-# TAB 1: CUSTOMER SUPPORT CHATBOT & TICKETING
+# TAB 1: CUSTOMER SUPPORT CHATBOT
 # ------------------------------------------
 with tab1:
     st.subheader("💬 PDL 24/7 AI Customer Support Portal")
@@ -132,12 +116,10 @@ with tab1:
             st.markdown(res_cs)
 
 # ------------------------------------------
-# TAB 2: NOC MONITORING & FAULT ESCALATION
+# TAB 2: NOC MONITORING & ESCALATION
 # ------------------------------------------
 with tab2:
     st.subheader("📡 AI-NOC Telemetry & Automated Fault Escalation")
-    st.info("Simulate live network incident to trigger Tier 1-3 Escalation Workflow:")
-    
     incident_type = st.selectbox(
         "Select Network Incident Scenario:",
         [
@@ -172,17 +154,15 @@ with tab2:
             st.markdown(res_noc)
 
 # ------------------------------------------
-# TAB 3: EXECUTIVE COUNCIL & DEPARTMENTAL AUDIT
+# TAB 3: EXECUTIVE COUNCIL AUDIT
 # ------------------------------------------
 with tab3:
     st.subheader("🏛️ Enterprise Multi-Agent Policy & Strategy Audit")
-    
     audit_category = st.selectbox(
         "Select Audit Scope:",
         [
             "HR Leave Policy & Workplace SOP Verification",
             "Finance, Procurement & Vendor SLA Audit",
-            "Green AI Energy OpEx Savings Plan",
             "Full Cross-Departmental Digital Transformation Blueprint"
         ]
     )
