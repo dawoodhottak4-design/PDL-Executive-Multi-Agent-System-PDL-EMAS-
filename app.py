@@ -1,8 +1,7 @@
 import streamlit as st
 from crewai import Agent, Crew, Process, Task
 from langchain_groq import ChatGroq
-from langchain_community.tools import DuckDuckGoSearchRun
-
+from crewai_tools import SerperDevTool, DuckDuckGoSearchTool
 # ==========================================
 # 1. PAGE CONFIGURATION & STYLING
 # ==========================================
@@ -34,7 +33,8 @@ llm = ChatGroq(
 )
 
 # Initialize Search Tool for SOPs & Policies
-search_tool = DuckDuckGoSearchRun()
+# Updated Clean Search Tool
+search_tool = DuckDuckGoSearchTool()
 
 # ==========================================
 # 3. DEFINE ALL 8 SPECIALIZED AGENTS
