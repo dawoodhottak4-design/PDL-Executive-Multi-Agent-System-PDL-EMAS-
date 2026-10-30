@@ -1,7 +1,7 @@
 import streamlit as st
 from crewai import Agent, Crew, Process, Task
 from langchain_groq import ChatGroq
-from crewai_tools import SerperDevTool, DuckDuckGoSearchTool
+
 # ==========================================
 # 1. PAGE CONFIGURATION & STYLING
 # ==========================================
@@ -12,7 +12,7 @@ st.set_page_config(
 )
 
 st.title("📡 Pak Datacom Limited (PDL) - Unified AI Executive & Operations Hub")
-st.caption("Powered by CrewAI, Groq (openai/gpt-oss-120b), & DDG Search Tool")
+st.caption("Powered by CrewAI & Groq (openai/gpt-oss-120b)")
 
 # ==========================================
 # 2. API KEY & MODEL CONFIGURATION
@@ -32,36 +32,27 @@ llm = ChatGroq(
     temperature=0.2
 )
 
-# Initialize Search Tool for SOPs & Policies
-# Updated Clean Search Tool
-search_tool = DuckDuckGoSearchTool()
-
 # ==========================================
-# 3. DEFINE ALL 8 SPECIALIZED AGENTS
+# 3. DEFINE ALL SPECIALIZED AGENTS (ZERO DEPENDENCY CONFLICT)
 # ==========================================
 
-# 1. Executive Lead
 ceo_agent = Agent(
     role="PDL Chief AI Transformation Officer",
     goal="Synthesize cross-departmental operations, customer support metrics, and NOC escalation strategies.",
     backstory="You are an executive strategist at Pak Datacom Limited overseeing unified digital operations and corporate compliance.",
     verbose=True,
     allow_delegation=True,
-    llm=llm,
-    tools=[search_tool]
+    llm=llm
 )
 
-# 2. Customer Support & Ticketing Agent (NEW)
 customer_support_agent = Agent(
     role="PDL AI Customer Experience & Ticketing Specialist",
     goal="Handle client inquiries, troubleshoot link queries, draft SLA responses, and auto-generate e-tickets.",
     backstory="You manage customer communications, SLA query resolutions, and ticket routing for PDL's corporate and government clients.",
     verbose=True,
-    llm=llm,
-    tools=[search_tool]
+    llm=llm
 )
 
-# 3. NOC Telemetry & Predictive Monitoring Agent (NEW)
 noc_monitoring_agent = Agent(
     role="PDL AI-NOC Telemetry & Network Health Monitor",
     goal="Analyze satellite attenuation, VSAT rain fade, fiber link degradation, and predict network faults.",
@@ -70,37 +61,30 @@ noc_monitoring_agent = Agent(
     llm=llm
 )
 
-# 4. Fault Escalation & SLA Audit Agent (NEW)
 escalation_agent = Agent(
     role="PDL Incident Escalation & SLA Compliance Officer",
     goal="Execute Tier 1 to Tier 3 fault escalation protocols, assign field teams with GPS alerts, and track SLA restoration deadlines.",
     backstory="You enforce SLA restoration compliance. When network faults occur, you trigger automated team alerts and management escalations.",
     verbose=True,
-    llm=llm,
-    tools=[search_tool]
+    llm=llm
 )
 
-# 5. HR & Policy Lead
 hr_agent = Agent(
     role="PDL HR & Workplace Governance Specialist",
-    goal="Retrieve and audit HR leave policies, employee SOPs, and organizational compliance guidelines.",
+    goal="Audit HR leave policies, employee SOPs, and organizational compliance guidelines.",
     backstory="You manage internal workforce policies and standard operating procedures.",
     verbose=True,
-    llm=llm,
-    tools=[search_tool]
+    llm=llm
 )
 
-# 6. Finance Strategist
 finance_agent = Agent(
     role="PDL Corporate Finance & SLA Procurement Auditor",
     goal="Audit procurement rules, financial SLAs, OpEx models, and cost optimization strategies.",
     backstory="You manage operational budget audits, vendor SLAs, and telecom financial planning.",
     verbose=True,
-    llm=llm,
-    tools=[search_tool]
+    llm=llm
 )
 
-# 7. Green Energy Manager
 energy_agent = Agent(
     role="Green AI Energy & Site Power Specialist",
     goal="Optimize hybrid power systems (Solar/Battery/Generator) for remote VSAT towers to cut fuel OpEx.",
@@ -109,7 +93,6 @@ energy_agent = Agent(
     llm=llm
 )
 
-# 8. B2G & Safe City Lead
 safe_city_agent = Agent(
     role="B2G Safe City & Civic AI Integration Lead",
     goal="Design turnkey civic safety, VMS integration, and municipal traffic AI solutions.",
@@ -207,7 +190,7 @@ with tab3:
     audit_instructions = st.text_area("Audit Focus Details:", "Analyze PDL standard operating procedures, HR policy guidelines, and financial SLA margins.")
     
     if st.button("Run Multi-Agent Executive Audit"):
-        with st.spinner("Executive Council Agents searching policies and compiling master report..."):
+        with st.spinner("Executive Council Agents compiling master report..."):
             task_hr = Task(
                 description=f"Audit HR policies and SOPs regarding: {audit_instructions}.",
                 expected_output="HR Policy Summary Report.",
