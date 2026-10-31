@@ -1,21 +1,20 @@
-import os
 import streamlit as st
-from crewai import Agent, Crew, Process, Task
+from langchain_groq import ChatGroq
 
 # ==========================================
 # 1. PAGE CONFIGURATION
 # ==========================================
 st.set_page_config(
-    page_title="PDL AI-Exec Council & Support Hub",
+    page_title="PDL AI-NOC Operations Hub",
     page_icon="📡",
     layout="wide"
 )
 
-st.title("📡 Pak Datacom Limited (PDL) - Unified AI Executive & Operations Hub")
-st.caption("Powered by CrewAI & Groq (openai/gpt-oss-120b)")
+st.title("📡 Pak Datacom Limited (PDL) - Technical NOC & Operations Module")
+st.caption("Powered by Groq API (openai/gpt-oss-120b) | Zero Local Dependencies")
 
 # ==========================================
-# 2. API KEY ENVIRONMENT CONFIGURATION
+# 2. API KEY SETUP
 # ==========================================
 groq_api_key = st.secrets.get("GROQ_API_KEY")
 
@@ -25,171 +24,49 @@ if not groq_api_key:
         st.warning("Please configure GROQ_API_KEY in Streamlit Secrets or enter it above to proceed.")
         st.stop()
 
-# Set environment variables for CrewAI native Groq integration
-os.environ["GROQ_API_KEY"] = groq_api_key
-MODEL_NAME = "groq/openai/gpt-oss-120b"
-
-# ==========================================
-# 3. DEFINE ALL SPECIALIZED AGENTS
-# ==========================================
-
-ceo_agent = Agent(
-    role="PDL Chief AI Transformation Officer",
-    goal="Synthesize cross-departmental operations, customer support metrics, and NOC escalation strategies.",
-    backstory="You are an executive strategist at Pak Datacom Limited overseeing unified digital operations and corporate compliance.",
-    verbose=True,
-    allow_delegation=True,
-    llm=MODEL_NAME
-)
-
-customer_support_agent = Agent(
-    role="PDL AI Customer Experience & Ticketing Specialist",
-    goal="Handle client inquiries, troubleshoot link queries, draft SLA responses, and auto-generate e-tickets.",
-    backstory="You manage customer communications, SLA query resolutions, and ticket routing for PDL's corporate and government clients.",
-    verbose=True,
-    llm=MODEL_NAME
-)
-
-noc_monitoring_agent = Agent(
-    role="PDL AI-NOC Telemetry & Network Health Monitor",
-    goal="Analyze satellite attenuation, VSAT rain fade, fiber link degradation, and predict network faults.",
-    backstory="You are an automated network monitoring expert that reads link telemetry and flags predictive faults before outages occur.",
-    verbose=True,
-    llm=MODEL_NAME
-)
-
-escalation_agent = Agent(
-    role="PDL Incident Escalation & SLA Compliance Officer",
-    goal="Execute Tier 1 to Tier 3 fault escalation protocols, assign field teams with GPS alerts, and track SLA restoration deadlines.",
-    backstory="You enforce SLA restoration compliance. When network faults occur, you trigger automated team alerts and management escalations.",
-    verbose=True,
-    llm=MODEL_NAME
-)
-
-hr_agent = Agent(
-    role="PDL HR & Workplace Governance Specialist",
-    goal="Audit HR leave policies, employee SOPs, and organizational compliance guidelines.",
-    backstory="You manage internal workforce policies and standard operating procedures.",
-    verbose=True,
-    llm=MODEL_NAME
-)
-
-finance_agent = Agent(
-    role="PDL Corporate Finance & SLA Procurement Auditor",
-    goal="Audit procurement rules, financial SLAs, OpEx models, and cost optimization strategies.",
-    backstory="You manage operational budget audits, vendor SLAs, and telecom financial planning.",
-    verbose=True,
-    llm=MODEL_NAME
+# Initialize Groq LLM directly for robust performance
+llm = ChatGroq(
+    groq_api_key=groq_api_key,
+    model_name="openai/gpt-oss-120b",
+    temperature=0.2
 )
 
 # ==========================================
-# 4. UI MULTI-TAB NAVIGATION
+# 3. TECHNICAL NOC SIMULATION & DIAGNOSTICS UI
 # ==========================================
-tab1, tab2, tab3 = st.tabs([
-    "💬 Customer Support & Auto-Ticketing",
-    "📡 Live NOC Monitoring & Fault Escalation",
-    "🏛️ Executive Council & Policy Audit"
-])
+st.subheader("🛠️ AI-NOC Telemetry & Fault Diagnostics")
 
-# ------------------------------------------
-# TAB 1: CUSTOMER SUPPORT CHATBOT
-# ------------------------------------------
-with tab1:
-    st.subheader("💬 PDL 24/7 AI Customer Support Portal")
-    client_name = st.text_input("Client Organization Name:", "National Bank / Enterprise Client")
-    client_query = st.text_area("Describe your issue or query:", "Our satellite VSAT link at Quetta branch is experiencing high latency and packet loss during heavy rain.")
-    
-    if st.button("Submit Customer Query"):
-        with st.spinner("AI Customer Support Agent is analyzing query & checking SLAs..."):
-            task_cs = Task(
-                description=f"Analyze query from {client_name}: '{client_query}'. Check PDL SLAs, provide troubleshooting steps, and generate an automated ticket summary.",
-                expected_output="Professional customer response with troubleshooting guide and auto-generated Incident Ticket ID.",
-                agent=customer_support_agent
-            )
-            cs_crew = Crew(agents=[customer_support_agent], tasks=[task_cs], process=Process.sequential)
-            res_cs = cs_crew.kickoff()
-            
-            st.success("✅ Support Response Generated & Ticket Created!")
-            st.markdown(res_cs)
+incident_scenario = st.selectbox(
+    "Select Network Incident Scenario:",
+    [
+        "VSAT Rain Fade & Uplink Attenuation (Quetta Hub)",
+        "Main Optical Fiber Link Cut (Lahore-Multan Segment)",
+        "Commercial Grid Failure on Off-Grid Remote VSAT Tower #88"
+    ]
+)
 
-# ------------------------------------------
-# TAB 2: NOC MONITORING & ESCALATION
-# ------------------------------------------
-with tab2:
-    st.subheader("📡 AI-NOC Telemetry & Automated Fault Escalation")
-    incident_type = st.selectbox(
-        "Select Network Incident Scenario:",
-        [
-            "VSAT Rain Fade & Uplink Degradation (Quetta Hub)",
-            "Main Optical Fiber Link Cut (Lahore-Multan Segment)",
-            "Commercial Grid Failure on Off-Grid Remote VSAT Tower #88"
-        ]
-    )
-    
-    if st.button("🚀 Trigger AI-NOC Incident Workflow"):
-        with st.spinner("NOC Monitoring & Escalation Agents collaborating..."):
-            task_mon = Task(
-                description=f"Analyze network telemetry for incident: '{incident_type}'. Identify root cause and immediate AI compensation strategy.",
-                expected_output="Technical telemetry diagnosis report.",
-                agent=noc_monitoring_agent
-            )
-            
-            task_esc = Task(
-                description=f"Formulate Tier 1 to Tier 3 Escalation Matrix for '{incident_type}'. Specify field team alert triggers, GPS dispatch details, and SLA restoration deadlines.",
-                expected_output="Detailed Fault Escalation Protocol and SLA Target Timeline.",
-                agent=escalation_agent
-            )
-            
-            noc_crew = Crew(
-                agents=[noc_monitoring_agent, escalation_agent],
-                tasks=[task_mon, task_esc],
-                process=Process.sequential
-            )
-            res_noc = noc_crew.kickoff()
-            
-            st.success("✅ Incident Diagnostic & Escalation Matrix Executed!")
-            st.markdown(res_noc)
+custom_notes = st.text_area("Additional Technical Parameters (Optional):", "Check signal-to-noise ratio and trigger automated backup link restoration.")
 
-# ------------------------------------------
-# TAB 3: EXECUTIVE COUNCIL AUDIT
-# ------------------------------------------
-with tab3:
-    st.subheader("🏛️ Enterprise Multi-Agent Policy & Strategy Audit")
-    audit_category = st.selectbox(
-        "Select Audit Scope:",
-        [
-            "HR Leave Policy & Workplace SOP Verification",
-            "Finance, Procurement & Vendor SLA Audit",
-            "Full Cross-Departmental Digital Transformation Blueprint"
-        ]
-    )
-    
-    audit_instructions = st.text_area("Audit Focus Details:", "Analyze PDL standard operating procedures, HR policy guidelines, and financial SLA margins.")
-    
-    if st.button("Run Multi-Agent Executive Audit"):
-        with st.spinner("Executive Council Agents compiling master report..."):
-            task_hr = Task(
-                description=f"Audit HR policies and SOPs regarding: {audit_instructions}.",
-                expected_output="HR Policy Summary Report.",
-                agent=hr_agent
-            )
-            task_fin = Task(
-                description=f"Audit financial SLAs and OpEx models for: {audit_instructions}.",
-                expected_output="Financial SLA Audit Report.",
-                agent=finance_agent
-            )
-            task_ceo = Task(
-                description=f"Synthesize HR, Finance, and Technical inputs into a Master Strategy Document for: {audit_category}.",
-                expected_output="Executive Master Audit Report addressed to PDL Board.",
-                agent=ceo_agent
-            )
-            
-            exec_crew = Crew(
-                agents=[ceo_agent, hr_agent, finance_agent],
-                tasks=[task_hr, task_fin, task_ceo],
-                process=Process.sequential
-            )
-            res_exec = exec_crew.kickoff()
-            
-            st.success("✅ Executive Audit Completed!")
-            st.markdown(res_exec)
+if st.button("🚀 Run AI-NOC Diagnostic & Escalation Protocol"):
+    with st.spinner("AI-NOC Specialist analyzing telemetry and generating protocol..."):
+        
+        prompt = f"""
+        You are Senior AI-NOC & Operations Specialist at Pak Datacom Limited (PDL).
+        Analyze the following network incident scenario:
+        Scenario: {incident_scenario}
+        Additional Notes: {custom_notes}
+        
+        Provide a structured technical response covering:
+        1. Root Cause Analysis (RCA) based on telecom telemetry.
+        2. Immediate AI Compensation / Automated Mitigation Strategy.
+        3. Tier 1 to Tier 3 Fault Escalation Matrix with SLA targets.
+        4. Field Team Dispatch instructions (GPS / site coordinates alert format).
+        """
+        
+        try:
+            response = llm.invoke(prompt)
+            st.success("✅ AI-NOC Diagnostic Completed Successfully!")
+            st.markdown("### 📋 Technical Incident Report & Escalation Plan")
+            st.markdown(response.content)
+        except Exception as e:
+            st.error(f"Error executing AI model: {e}")
