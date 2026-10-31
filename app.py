@@ -1,6 +1,6 @@
+import os
 import streamlit as st
 from crewai import Agent, Crew, Process, Task
-from langchain_groq import ChatGroq
 
 # ==========================================
 # 1. PAGE CONFIGURATION
@@ -15,7 +15,7 @@ st.title("📡 Pak Datacom Limited (PDL) - Unified AI Executive & Operations Hub
 st.caption("Powered by CrewAI & Groq (openai/gpt-oss-120b)")
 
 # ==========================================
-# 2. API KEY CONFIGURATION
+# 2. API KEY ENVIRONMENT CONFIGURATION
 # ==========================================
 groq_api_key = st.secrets.get("GROQ_API_KEY")
 
@@ -25,15 +25,12 @@ if not groq_api_key:
         st.warning("Please configure GROQ_API_KEY in Streamlit Secrets or enter it above to proceed.")
         st.stop()
 
-# Initialize Groq LLM
-llm = ChatGroq(
-    groq_api_key=groq_api_key,
-    model_name="openai/gpt-oss-120b",
-    temperature=0.2
-)
+# Set environment variables for CrewAI native Groq integration
+os.environ["GROQ_API_KEY"] = groq_api_key
+MODEL_NAME = "groq/openai/gpt-oss-120b"
 
 # ==========================================
-# 3. DEFINE ALL SPECIALIZED AGENTS (CLEAN CONFIG)
+# 3. DEFINE ALL SPECIALIZED AGENTS
 # ==========================================
 
 ceo_agent = Agent(
@@ -42,7 +39,7 @@ ceo_agent = Agent(
     backstory="You are an executive strategist at Pak Datacom Limited overseeing unified digital operations and corporate compliance.",
     verbose=True,
     allow_delegation=True,
-    llm=llm
+    llm=MODEL_NAME
 )
 
 customer_support_agent = Agent(
@@ -50,7 +47,7 @@ customer_support_agent = Agent(
     goal="Handle client inquiries, troubleshoot link queries, draft SLA responses, and auto-generate e-tickets.",
     backstory="You manage customer communications, SLA query resolutions, and ticket routing for PDL's corporate and government clients.",
     verbose=True,
-    llm=llm
+    llm=MODEL_NAME
 )
 
 noc_monitoring_agent = Agent(
@@ -58,7 +55,7 @@ noc_monitoring_agent = Agent(
     goal="Analyze satellite attenuation, VSAT rain fade, fiber link degradation, and predict network faults.",
     backstory="You are an automated network monitoring expert that reads link telemetry and flags predictive faults before outages occur.",
     verbose=True,
-    llm=llm
+    llm=MODEL_NAME
 )
 
 escalation_agent = Agent(
@@ -66,7 +63,7 @@ escalation_agent = Agent(
     goal="Execute Tier 1 to Tier 3 fault escalation protocols, assign field teams with GPS alerts, and track SLA restoration deadlines.",
     backstory="You enforce SLA restoration compliance. When network faults occur, you trigger automated team alerts and management escalations.",
     verbose=True,
-    llm=llm
+    llm=MODEL_NAME
 )
 
 hr_agent = Agent(
@@ -74,7 +71,7 @@ hr_agent = Agent(
     goal="Audit HR leave policies, employee SOPs, and organizational compliance guidelines.",
     backstory="You manage internal workforce policies and standard operating procedures.",
     verbose=True,
-    llm=llm
+    llm=MODEL_NAME
 )
 
 finance_agent = Agent(
@@ -82,7 +79,7 @@ finance_agent = Agent(
     goal="Audit procurement rules, financial SLAs, OpEx models, and cost optimization strategies.",
     backstory="You manage operational budget audits, vendor SLAs, and telecom financial planning.",
     verbose=True,
-    llm=llm
+    llm=MODEL_NAME
 )
 
 # ==========================================
