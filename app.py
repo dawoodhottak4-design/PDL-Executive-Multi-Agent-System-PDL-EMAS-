@@ -5,7 +5,7 @@ from langchain_groq import ChatGroq
 # 1. PAGE CONFIGURATION & STYLING
 # ==========================================
 st.set_page_config(
-    page_title="PDL AI Enterprise Hub",
+    page_title="PDL AI Enterprise & Executive Hub",
     page_icon="📡",
     layout="wide"
 )
@@ -24,14 +24,15 @@ st.markdown("""
         margin-bottom: 25px;
     }
     .stTabs [data-baseweb="tab-list"] {
-        gap: 10px;
+        gap: 8px;
     }
     .stTabs [data-baseweb="tab"] {
         background-color: #0F2548;
-        border-radius: 8px;
-        padding: 8px 16px;
+        border-radius: 6px;
+        padding: 6px 14px;
         color: white;
         font-weight: 600;
+        font-size: 0.9rem;
     }
     .stTabs [aria-selected="true"] {
         background: linear-gradient(135deg, #0083B0 0%, #00B4DB 100%);
@@ -40,7 +41,7 @@ st.markdown("""
 """, unsafe_allow_html=True)
 
 st.markdown('<p class="main-header">📡 Pak Datacom Limited (PDL) - AI Enterprise Hub</p>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Unified AI Operations: NOC, Customer Support, HR Policies & Finance Procurement</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Unified AI Operations: NOC, Customer Support, HR, Finance, Green Energy & Safe City Solutions</p>', unsafe_allow_html=True)
 
 # ==========================================
 # 2. API KEY SETUP
@@ -61,13 +62,15 @@ llm = ChatGroq(
 )
 
 # ==========================================
-# 3. MULTI-TAB INTERFACE SETUP
+# 3. MULTI-TAB INTERFACE SETUP (6 MODULES)
 # ==========================================
-tab1, tab2, tab3, tab4 = st.tabs([
+tab1, tab2, tab3, tab4, tab5, tab6 = st.tabs([
     "📡 Technical NOC",
     "💬 Customer Support",
-    "🏛️ HR Policy & SOPs",
-    "💰 Finance & Procurement"
+    "🏛️ HR & SOPs",
+    "💰 Finance & SLA",
+    "⚡ Green Energy / Solar",
+    "🛡️ B2G Safe City"
 ])
 
 # ------------------------------------------
@@ -75,7 +78,6 @@ tab1, tab2, tab3, tab4 = st.tabs([
 # ------------------------------------------
 with tab1:
     st.subheader("🛠️ AI-NOC Telemetry & Fault Diagnostics")
-    
     col1, col2 = st.columns(2)
     with col1:
         incident_scenario = st.selectbox(
@@ -92,7 +94,7 @@ with tab1:
 
     custom_notes = st.text_area("Additional Technical Parameters:", "Check signal-to-noise ratio and trigger automated backup link restoration.", key="noc_notes")
 
-    if st.button("🚀 Run AI-NOC Diagnostic & Escalation Protocol", use_container_width=True):
+    if st.button("🚀 Run AI-NOC Diagnostic Protocol", use_container_width=True, key="btn_noc"):
         with st.spinner("AI-NOC Specialist analyzing telemetry..."):
             prompt = f"""
             You are Senior AI-NOC & Operations Specialist at Pak Datacom Limited (PDL).
@@ -110,8 +112,9 @@ with tab1:
             try:
                 response = llm.invoke(prompt)
                 st.success("✅ AI-NOC Diagnostic Completed Successfully!")
-                st.markdown("### 📋 Technical Incident Report")
-                st.markdown(response.content)
+                with st.container(border=True):
+                    st.markdown("### 📋 Technical Incident Report")
+                    st.markdown(response.content)
             except Exception as e:
                 st.error(f"Error: {e}")
 
@@ -120,7 +123,6 @@ with tab1:
 # ------------------------------------------
 with tab2:
     st.subheader("💬 PDL 24/7 AI Customer Support & Ticketing Desk")
-    
     col_c1, col_c2 = st.columns(2)
     with col_c1:
         client_name = st.text_input("Client / Organization Name:", "National Bank of Pakistan")
@@ -129,7 +131,7 @@ with tab2:
 
     client_query = st.text_area("Describe Customer Issue:", "Our branch office link is experiencing intermittent packet loss during peak hours.")
 
-    if st.button("🚀 Generate Support Response & Auto-Ticket", use_container_width=True):
+    if st.button("🚀 Generate Support Response & Auto-Ticket", use_container_width=True, key="btn_cs"):
         with st.spinner("AI Customer Support Agent checking SLAs..."):
             support_prompt = f"""
             You are PDL AI Customer Experience & Ticketing Specialist.
@@ -147,8 +149,9 @@ with tab2:
             try:
                 support_response = llm.invoke(support_prompt)
                 st.success("✅ Support Response Generated & Ticket Logged!")
-                st.markdown("### 🎫 Customer Response & Ticket Summary")
-                st.markdown(support_response.content)
+                with st.container(border=True):
+                    st.markdown("### 🎫 Customer Response & Ticket Summary")
+                    st.markdown(support_response.content)
             except Exception as e:
                 st.error(f"Error: {e}")
 
@@ -157,7 +160,6 @@ with tab2:
 # ------------------------------------------
 with tab3:
     st.subheader("🏛️ PDL HR Policy & Workplace Governance Assistant")
-    
     hr_query_type = st.selectbox(
         "Select HR Inquiry Type:",
         [
@@ -167,10 +169,9 @@ with tab3:
             "Performance Appraisal & Promotion Criteria"
         ]
     )
-    
     hr_details = st.text_area("Enter specific HR question or scenario:", "What is the standard procedure for applying for extended medical leave and what documents are required?")
 
-    if st.button("🚀 Consult HR Policy Guidelines", use_container_width=True):
+    if st.button("🚀 Consult HR Policy Guidelines", use_container_width=True, key="btn_hr"):
         with st.spinner("HR & Governance Specialist auditing policies..."):
             hr_prompt = f"""
             You are PDL HR & Workplace Governance Specialist.
@@ -183,8 +184,9 @@ with tab3:
             try:
                 hr_response = llm.invoke(hr_prompt)
                 st.success("✅ HR Policy Guidelines Retrieved!")
-                st.markdown("### 📄 HR Advisory Report")
-                st.markdown(hr_response.content)
+                with st.container(border=True):
+                    st.markdown("### 📄 HR Advisory Report")
+                    st.markdown(hr_response.content)
             except Exception as e:
                 st.error(f"Error: {e}")
 
@@ -193,7 +195,6 @@ with tab3:
 # ------------------------------------------
 with tab4:
     st.subheader("💰 PDL Corporate Finance & SLA Procurement Auditor")
-    
     fin_query_type = st.selectbox(
         "Select Financial / Procurement Scope:",
         [
@@ -203,10 +204,9 @@ with tab4:
             "Corporate Billing & Revenue Assurance Auditing"
         ]
     )
-    
     fin_details = st.text_area("Enter financial scenario or audit question:", "Evaluate procurement compliance and financial SLA penalties for delayed hardware delivery by a vendor.")
 
-    if st.button("🚀 Run Financial & SLA Audit", use_container_width=True):
+    if st.button("🚀 Run Financial & SLA Audit", use_container_width=True, key="btn_fin"):
         with st.spinner("Finance & Procurement Strategist analyzing parameters..."):
             fin_prompt = f"""
             You are PDL Corporate Finance & SLA Procurement Auditor.
@@ -219,7 +219,86 @@ with tab4:
             try:
                 fin_response = llm.invoke(fin_prompt)
                 st.success("✅ Financial & SLA Audit Completed!")
-                st.markdown("### 📊 Financial Audit & Compliance Report")
-                st.markdown(fin_response.content)
+                with st.container(border=True):
+                    st.markdown("### 📊 Financial Audit & Compliance Report")
+                    st.markdown(fin_response.content)
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+# ------------------------------------------
+# TAB 5: GREEN ENERGY & SOLAR OPTIMIZATION (NEW)
+# ------------------------------------------
+with tab5:
+    st.subheader("⚡ Green AI Energy & Remote Site Power Optimization")
+    energy_scope = st.selectbox(
+        "Select Green Energy Focus:",
+        [
+            "Hybrid Solar-Battery-Generator Integration for Remote VSAT Sites",
+            "Diesel OpEx Reduction & Fuel Consumption Audit",
+            "Remote Power Telemetry & Battery Health Forecasting",
+            "Green Telecom Sustainability Roadmap for Balochistan Grid-Isolated Hubs"
+        ]
+    )
+    energy_details = st.text_area("Enter site specific power parameters:", "Calculate potential monthly diesel savings and battery backup runtime for an off-grid VSAT repeater station operating under extreme weather.")
+
+    if st.button("🚀 Run Green Energy Optimization Plan", use_container_width=True, key="btn_energy"):
+        with st.spinner("Green Energy Specialist calculating power metrics..."):
+            energy_prompt = f"""
+            You are Green AI Energy & Site Power Specialist at Pak Datacom Limited (PDL).
+            Analyze the following power optimization scenario:
+            - Focus: {energy_scope}
+            - Details: {energy_details}
+            
+            Provide an executive engineering report covering:
+            1. Hybrid power system configuration (Solar capacity, lithium battery bank, diesel gen set).
+            2. Estimated OpEx reduction and fuel cost savings model.
+            3. Carbon footprint mitigation metrics.
+            4. Implementation roadmap for remote off-grid telecom towers.
+            """
+            try:
+                energy_response = llm.invoke(energy_prompt)
+                st.success("✅ Green Energy Optimization Blueprint Generated!")
+                with st.container(border=True):
+                    st.markdown("### 🌿 Solar & Energy Efficiency Report")
+                    st.markdown(energy_response.content)
+            except Exception as e:
+                st.error(f"Error: {e}")
+
+# ------------------------------------------
+# TAB 6: B2G SAFE CITY & CIVIC INTEGRATION (NEW)
+# ------------------------------------------
+with tab6:
+    st.subheader("🛡️ B2G Safe City & Municipal AI Integration Hub")
+    safe_city_scope = st.selectbox(
+        "Select Safe City Project Scope:",
+        [
+            "Turnkey Command & Control Center VMS Integration",
+            "AI-Powered Automatic Number Plate Recognition (ANPR) on Main Corridors",
+            "Municipal Traffic Analytics & Emergency Corridor Management",
+            "Public Safety Video Analytics & Threat Detection Framework"
+        ]
+    )
+    safe_city_details = st.text_area("Enter municipal project requirements:", "Design an integrated architecture for high-definition surveillance feeds and ANPR monitoring along major urban transport arteries.")
+
+    if st.button("🚀 Generate Safe City Solution Blueprint", use_container_width=True, key="btn_safecity"):
+        with st.spinner("B2G Safe City Lead formulating integration strategy..."):
+            safe_city_prompt = f"""
+            You are B2G Safe City & Civic AI Integration Lead at Pak Datacom Limited (PDL).
+            Design a technical solution proposal for:
+            - Scope: {safe_city_scope}
+            - Requirements: {safe_city_details}
+            
+            Provide a comprehensive executive proposal document covering:
+            1. Core system architecture & optical fiber/wireless backhaul integration.
+            2. Real-time video analytics and ANPR data processing workflow.
+            3. Command center dashboard integration and emergency dispatch protocols.
+            4. Scalability, security, and municipal compliance guidelines.
+            """
+            try:
+                safe_city_response = llm.invoke(safe_city_prompt)
+                st.success("✅ Safe City Solution Blueprint Generated Successfully!")
+                with st.container(border=True):
+                    st.markdown("### 🏛️ B2G Safe City Project Proposal & Architecture")
+                    st.markdown(safe_city_response.content)
             except Exception as e:
                 st.error(f"Error: {e}")
